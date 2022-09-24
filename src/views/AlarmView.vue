@@ -20,9 +20,10 @@
         <form class="setAlarm">
             <!-- Div to set hours, minutes & seconds -->
             <div class="set-alarm-field">
-                <input type="number" name="hr" placeholder="HH" max="23" min="00">
-                <input type="number" name="min" placeholder="MM" max="59" min="00">
-                <input type="number" name="sec" placeholder="SS" max="59" min="00">
+                <input type="number" value="year" name="hr" placeholder="HH" max="23" min="00">
+                <input type="number" value="month" name="min" placeholder="MM" max="59" min="00">
+                <input type="number" value="day"  name="sec" placeholder="SS" max="59" min="00">
+                <input type="number" value="day"  name="sec" placeholder="SS" max="59" min="00">
             </div>
             <!-- Div that contains buttons -->
             <div class="buttons">
@@ -161,7 +162,7 @@ export default {
 }
 </script>
 
-<style>
+<!-- <style>
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 * {
@@ -375,4 +376,4 @@ body {
   box-shadow: 0 5px 25px #0bff8d;
   transform: translateX(10px);
 }
-</style>
+</style> -->

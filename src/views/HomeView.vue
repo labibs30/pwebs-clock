@@ -35,16 +35,15 @@ export default {
   components: {
     HelloWorld, Navbar
   },
-  data() {
-
-    return {
-      displayHours: 0,
-      displayMinutes: 0,
-      displaySeconds: 0,
-      displayPeriod: 0,
-    };
-  },
-  methods: {
+    data(){
+        return{
+            displayHours: 0,
+            displayMinutes: 0,
+            displaySeconds: 0,
+            displayPeriod: 0,
+        }
+    },
+    methods:{
         clock(){
             const timer = setInterval(()=>{
                 var today = new Date();
@@ -54,14 +53,6 @@ export default {
 
                 let period = "AM";
 
-                const formatSwitchBtn = document.querySelector(".format-switch-btn");
-
-                var formatValue = formatSwitchBtn.getAttribute("data-format");
-
-                if(formatValue === "12"){
-                    hours = hours > 12 ? hours%12 : hours;
-                }
-                console.log(formatValue);
                 this.displayHours = hours < 10 ? this.displayHours = "0"+ hours  : this.displayHours = hours;
                 this.displayMinutes = minutes < 10 ? this.displayMinutes = "0" + minutes: this.displayMinutes = minutes;
                 this.displaySeconds = seconds < 10 ? this.displaySeconds = "0" + seconds: this.displaySeconds = seconds;
@@ -69,7 +60,7 @@ export default {
             }, 1000)
             
         }
-  },
+    },
   mounted(){
         const formatSwitchBtn = document.querySelector(".format-switch-btn");
 
@@ -135,7 +126,7 @@ body {
   position: relative;
   color: #fff;
   background: #2d2f41;
-  width: 425px;
+  width: 550px;
   padding: 20px 45px;
   box-shadow: 0 5px 25px rgba(14, 21, 37, 0.8);
   border-radius: 10px;

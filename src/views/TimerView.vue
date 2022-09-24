@@ -1,48 +1,133 @@
 <template>
   <Navbar/>
-    <div class="digital-clock">
-    <i class="uil uil-ellipsis-v dot-menu-btn" id="active-menu"></i>
-    <ul class="dot-menu" id="active-menu">
-      <li class="menu-item" id="active-menu">
-        <span class="clock-format-text" id="active-menu">24-hour format</span>
-        <div class="format-switch-btn" data-format="12" id="active-menu"></div>
-      </li>
-    </ul>
-    <div class="time">
-      <span class="hours">00</span>
-      <span class="dots">:</span>
-      <span class="minutes">00</span>
-      <div class="right-side">
-        <span class="period">AM</span>
-        <span class="seconds">00</span>
-      </div>
-    </div>
-    <div class="content">
-        <div class="column">
-            <select>
-                <option value="Hour">Hour</option>
-            </select>
-            <select>
-                <option value="Min">Min</option>
-            </select>            
-            <select>
-                <option value="Sec">Sec</option>
-            </select>           
-            <select>
-                <option value="AM/PM">AM/PM</option>
-            </select>
-            <button>Set Alarm</button>
+    <div class="digital-clocks">
+        <div class="time">
+            <span class="hour">{{displayDays}}</span>
+            <span class="seconds">d</span> 
+            <span class="dots">:</span>
+            <span class="hour">{{displayHours}}</span>
+            <span class="seconds">h</span> 
+            <span class="dots">:</span>
+            <span class="hour">{{displayMinutes}}</span>
+            <span class="seconds">m</span> 
+            <span class="dots">:</span>
+            <span class="hour">{{displaySeconds}}</span>
+            <span class="seconds">s</span> 
+
         </div>
-    </div>
+        <h3>Setting Timer</h3>
+        <form>
+          <div class="form">
+            <div class="nes-field">
+               <input id="inputan"  type="number" placeholder="year ..." name="year" v-model="year" class="nes-input" min="2022" required>
+            </div>
+            <div class="nes-select job">
+                <select name="job" v-model="month" id="inputan">
+                    <option value="" disabled selected hidden>Select Month</option>
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10">November</option>
+                    <option value="11">Desember</option>
+                </select>
+            </div>
+            <div class="nes-field">
+               <input id="inputan" type="number" placeholder="Day ..." name="day" v-model="day" class="nes-input" max="31" min="00" required>
+            </div>
+          </div>
+          <div class="form">
+            <div class="nes-field">
+               <input id="inputan" type="number" placeholder="Hour ..." name="hour" v-model="hour" class="nes-input" max="23" min="00" required>
+            </div>
+            <div class="nes-field">
+               <input id="inputan" type="number" placeholder="Minute ..." name="minute" v-model="minute" class="nes-input" max="59" min="00" required>
+            </div>
+            <div class="nes-field">
+               <input id="inputan"  type="number" placeholder="Second ..." name="second" v-model="second" class="nes-input" max="59" min="00" required>
+            </div>
+          </div>
+        <button  type="text" @click="onClicked" id="button" class="nes-btn is-primary">Set Alarm</button>
+        </form>
   </div>
 </template>
 
 <script>
 import Navbar from "../components/Navbar.vue"
+
 export default {
-    name:'TimerView',
+    name:'AlarmView',
     components:{
         Navbar
+    },
+    data(){
+      const today = new Date();
+      const years = today.getFullYear();
+      var audio = new Audio(require('@/assets/ringtone.mp3'))
+        return{
+            displayHours: 0,
+            displayMinutes: 0,
+            displaySeconds: 0,
+            displayDays: 0,
+            year:'',
+            month:'',
+            day:'',
+            hour:'',
+            minute:'',
+            second:'',  
+            minYear : years,
+            audio:audio,
+        }
+    },
+    computed:{
+      _seconds : ()=>1000,
+      _minutes(){
+        return this._seconds * 60
+      },
+      _hours(){
+        return this._minutes * 60
+      },
+      _days(){
+        return this._hours * 24
+      }
+    },
+    methods:{
+        onClicked(){
+          console.log(this.year, this.month, this.day, this.no);
+          this.remainingTime();
+          event.preventDefault();
+        },
+        remainingTime(){
+            const timer = setInterval(()=>{
+              const now = new Date();
+                const end = new Date(this.year, this.month, this.day, this.hour, this.minute, this.second, 10);
+
+                const distance = end.getTime() - now.getTime();
+                if(distance < 0){
+                  this.audio.play()
+                  clearInterval(timer);
+                  return;
+                }
+                const days = Math.floor(distance/this._days);
+                const hours = Math.floor((distance % this._days)/this._hours);
+                const minutes = Math.floor((distance % this._hours)/this._minutes);
+                const seconds = Math.floor((distance % this._minutes)/this._seconds);
+
+                this.displayMinutes = minutes < 10 ? "0"+minutes : minutes;
+                this.displaySeconds = seconds < 10 ? "0"+seconds : seconds;
+                this.displayHours = hours < 10 ? "0"+hours : hours;
+                this.displayDays = days < 10 ? "0"+days : days;
+            }, 1000)
+            
+        }
+    },
+    mounted(){
     }
 }
 </script>
@@ -50,7 +135,7 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
-* {
+/* * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -63,13 +148,56 @@ body {
   justify-content: center;
   align-items: center;
   background: #2e2e44;
+} */
+.form{
+  display: flex;
+
+}
+#button {
+  margin-top: 4px;
+  color: #db3eb1;
+  border: 5px solid #fff;
+  border-radius:5px;
+  padding: 4px;
+  font-size: 1em;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  font-weight: bold;
+  filter: drop-shadow(0 0 15px #db3eb1) drop-shadow(0 0 50px #db3eb1) contrast(2) brightness(2);
+  transition: .5s;
 }
 
-.digital-clock {
+#button:hover {
+  color: #fff;
+  border: 5px solid #db3eb1;
+  background-color: #db3eb1;
+  filter: drop-shadow(0 0 20px #db3eb1) contrast(2) brightness(2);
+}
+
+#inputan{
+  font-weight: bold;
+  font-size: 18px;
+  display: block;
+  padding: 8px;
+  margin: 4px ;
+  width: 200px;
+  border: 4px solid transparent;
+  outline: none;
+  border-radius: 7px;
+  box-shadow: 0px 0px 25px 1px transparent;
+  transition: box-shadow 0.4s linear,
+              box-color 0.4s linear;
+}
+#inputan:focus{
+  border-color: #0dded8;
+  box-shadow: 0px 0px 20px 1px #0dded8;
+}
+
+.digital-clocks {
   position: relative;
   color: #fff;
   background: #2d2f41;
-  width: 425px;
+  width: 700px;
   padding: 20px 45px;
   box-shadow: 0 5px 25px rgba(14, 21, 37, 0.8);
   border-radius: 10px;
@@ -80,7 +208,7 @@ body {
   flex-direction: column;
 }
 
-.digital-clock::before {
+.digital-clocks::before {
   content: "";
   position: absolute;
   background: linear-gradient(45deg, #24ff6d, #2f93f1, #ff5e9a);
@@ -94,6 +222,7 @@ body {
   animation: glowing 10s infinite;
 }
 
+
 @keyframes glowing {
   0% {
     background-position: 0 50%;
@@ -104,17 +233,16 @@ body {
   100% {
     background-position: 0 50%;
   }
-}
-.time {
+} */
+/* .time {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-}
+} */
 
-.hours,
-.dots,
-.minutes {
+.hour,
+.dots {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -123,9 +251,8 @@ body {
   line-height: 125px;
 }
 
-.hours,
-.minutes {
-  font-size: 6.5rem;
+.hour{
+  font-size: 5.5rem;
   width: 125px;
 }
 .dots {
@@ -133,17 +260,12 @@ body {
   color: #929292;
 }
 
-.hours {
+.hour {
   background: -webkit-linear-gradient(90deg, #634dff, #5fd4ff);
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
 }
 
-.minutes {
-  background: -webkit-linear-gradient(90deg, #ff5e9a, #ffb960);
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
-}
 
 .right-side {
   position: relative;
@@ -154,17 +276,9 @@ body {
   margin-left: 10px;
 }
 
-.period,
 .seconds {
   font-size: 1.2em;
   font-weight: 500;
-}
-
-.period {
-  transform: translateY(-20px);
-  background: -webkit-linear-gradient(90deg, #f7b63f, #faf879);
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
 }
 .seconds {
   transform: translateY(16px);
@@ -173,92 +287,4 @@ body {
   -webkit-background-clip: text;
 }
 
-.calender {
-  display: flex;
-  justify-self: center;
-  align-items: center;
-  font-size: 1.3em;
-  font-weight: 500;
-  margin-bottom: 5px;
-  background: -webkit-linear-gradient(90deg, #ae4af6, #ff98d1);
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
-}
-.day-name,
-.day-number,
-.year {
-  margin-left: 8px;
-}
-
-.dot-menu-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 10px;
-  color: #efefef;
-  font-size: 1.5em;
-  cursor: pointer;
-}
-
-.dot-menu {
-  z-index: 999;
-  position: absolute;
-  top: 7px;
-  right: 5px;
-  list-style: none;
-  background: #353e54;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
-  visibility: hidden;
-  opacity: 0;
-  transition: 0.3 ease;
-}
-.dot-menu.active {
-  visibility: visible;
-  opacity: 1;
-}
-.menu-item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.clock-format-text {
-  color: #efefef;
-  font-size: 0.9em;
-  margin-right: 20px;
-}
-
-.format-switch-btn {
-  width: 35px;
-  height: 15px;
-  background: #485470;
-  border-radius: 75px;
-  box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.1),
-    inset -2px -2px 4px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.format-switch-btn:before {
-  content: "";
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background: #ff5e9a;
-  border-radius: 50%;
-  box-shadow: 0 5px 25px #ff5e9a;
-  transform: translateX(-10px);
-  transition: 0.3s ease;
-  transition-property: background, transform;
-}
-
-.format-switch-btn.active:before {
-  background: #0bff8d;
-  box-shadow: 0 5px 25px #0bff8d;
-  transform: translateX(10px);
-}
 </style>
