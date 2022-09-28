@@ -17,30 +17,18 @@
                 <span class="seconds">{{displaySeconds}}</span>
             </div>
         </div>
-        <form class="setAlarm">
-            <!-- Div to set hours, minutes & seconds -->
-            <div class="set-alarm-field">
-                <input type="number" value="year" name="hr" placeholder="HH" max="23" min="00">
-                <input type="number" value="month" name="min" placeholder="MM" max="59" min="00">
-                <input type="number" value="day"  name="sec" placeholder="SS" max="59" min="00">
-                <input type="number" value="day"  name="sec" placeholder="SS" max="59" min="00">
+        <form>
+          <div class="form">
+            <div class="nes-field">
+               <input id="inputan" type="number" placeholder="Hour ..." name="hour" v-model="hour" class="h" max="23" min="00" required>
             </div>
-            <!-- Div that contains buttons -->
-            <div class="buttons">
-                <button type="submit" class="set-alarm">Set Alarm</button>
-                <button type="reset" onclick="stopAlarm()" class="clear-alarm">Stop Alarm</button>
+            <div class="nes-field">
+               <input id="inputan" type="number" placeholder="Minute ..." name="minute" v-model="minute" class="m" max="59" min="00" required>
             </div>
+          </div>
+        <button  type="text" @click="onClicked" id="button" class="set">Set Alarm</button>
         </form>
         
-
-        <h3 style="margin: 20px 0;">Upcoming Alarms</h3>
-
-        <!-- Div that contains the list of all set alarms -->
-        <div id="upcoming-alarms">
-            <ul id="upcoming-alarms-list">
-                <!-- The list item is added using javascript when set alarm button is pressed -->
-            </ul>
-        </div>
   </div>
 </template>
 
@@ -52,14 +40,38 @@ export default {
         Navbar
     },
     data(){
+      var audio = new Audio(require('@/assets/ringtone.mp3'))
         return{
             displayHours: 0,
             displayMinutes: 0,
             displaySeconds: 0,
             displayPeriod: 0,
+            isActive:false,
+            minute:'',
+            hour:'',
+            audio:audio
         }
     },
     methods:{
+        onClicked(){
+          this.isActive = !this.isActive;
+          if(this.isActive){
+            console.log(this.hour, this.minute);
+            document.querySelector(".h").disabled = true;
+            document.querySelector(".m").disabled = true;
+            document.querySelector(".set").innerHTML = "Clear Alarm"
+          }else{
+            document.querySelector(".h").disabled = false;
+            document.querySelector(".m").disabled = false;
+            this.hour = "",
+            this.minute = "",
+            document.querySelector(".set").innerHTML = "Set Alarm"
+            this.audio.pause();
+          }
+
+          event.preventDefault();
+
+        },
         clock(){
             const timer = setInterval(()=>{
                 var today = new Date();
@@ -69,94 +81,23 @@ export default {
 
                 let period = "AM";
 
+
+                if(this.displayHours === this.hour && this.displayMinutes === this.minute){
+                  this.audio.play();
+                }
+                console.log(this.hour, this.minute, this.displayHours, this.displayMinutes);
                 this.displayHours = hours < 10 ? this.displayHours = "0"+ hours  : this.displayHours = hours;
+                this.displayPeriod = hours >= 12 ? this.displayPeriod = "PM" : this.displayPeriod= period;
                 this.displayMinutes = minutes < 10 ? this.displayMinutes = "0" + minutes: this.displayMinutes = minutes;
                 this.displaySeconds = seconds < 10 ? this.displaySeconds = "0" + seconds: this.displaySeconds = seconds;
-                this.displayPeriod = hours >= 12 ? this.displayPeriod = "PM" : this.displayPeriod= period;
-            }, 1000)
+
+
+           }, 1000)
             
         }
     },
     mounted(){
-
-        const audio = new Audio();
-
-        audio.loop = true;
-
-        let alarmTime = null;
-        let alarmTimeout = null;
-
-        const upcomingAlarmList = document.querySelector('#upcoming-alarms-list');
-        const addAlarm = document.querySelector('.setAlarm');
-
-        const alarmList = [];
-
-        function ring(realTime) {
-            audio.play();
-            alert(`It's ${realTime}`);
-        }
-
-        function stopAlarm() {
-            audio.pause();
-            if (alarmTimeout) {
-                clearTimeout(alarmTimeout);
-            }
-        }
-        var remove = (value) => {
-            let newList = alarmList.filter((time) => time != value);
-            alarmList.length = 0; // Clear contents
-            alarmList.push.apply(alarmList, newList);
-        }
-
-        upcomingAlarmList.addEventListener('click', e => {
-            if (e.target.classList.contains("deleteAlarm")) {
-                e.target.parentElement.remove();
-            }
-        });
-
-
-        function addNewAlarm(newAlarm) {
-            const html = 
-            `<li class = "time-list">        
-                <span class="time">${newAlarm}</span>
-                <button class="deleteAlarm" onclick = "remove(this.value)" value=${newAlarm}>Delete Alarm</button>       
-            </li>`
-            upcomingAlarmList.innerHTML += html
-        };
-
-        addAlarm.addEventListener('submit', event => {
-
-            event.preventDefault(); // to prevent default behaviour of webpage
-
-            let hour = formatTime(addAlarm.hr.value);
-            if (hour === '0') {
-                hour = '00'
-            }
-            let minute = formatTime(addAlarm.min.value);
-            if (minute === '0') {
-                minute = '00'
-            }
-            let second = formatTime(addAlarm.sec.value);
-            if (second === '0') {
-                second = '00'
-            }
-
-            const newAlarm = `${hour}:${minute}:${second}`
-
-            // add newAlarm to alarmList array
-            if (isNaN(newAlarm)) {
-                if (!alarmList.includes(newAlarm)) {
-                    alarmList.push(newAlarm);
-                    addNewAlarm(newAlarm);
-                    addAlarm.reset();
-                } else {
-                    alert(`Alarm for ${newAlarm} already set.`);
-                }
-            } else {
-                alert("Invalid Time Entered")
-            }
-        })
-        this.clock();
+      this.clock();
 
     }
 }

@@ -53,7 +53,7 @@
                <input id="inputan"  type="number" placeholder="Second ..." name="second" v-model="second" class="nes-input" max="59" min="00" required>
             </div>
           </div>
-        <button  type="text" @click="onClicked" id="button" class="nes-btn is-primary">Set Alarm</button>
+        <button  type="text" @click="onClicked" id="button" class="nes-btn is-primary">Set Timer</button>
         </form>
   </div>
 </template>
@@ -288,3 +288,4 @@ body {
 }
 
 </style>
+  
